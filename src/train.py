@@ -15,4 +15,3 @@ df.pop("Cabin")
 X = df.iloc[:, :-1]
 y = df.iloc[:, -1]
 
-print(df.isna().sum())
