@@ -8,6 +8,11 @@ df = pd.read_csv("dataset/titanic.csv")
 survived = df.pop("Survived")
 df["Survived"] = survived
 
+# Dropping the cabin column as it contains a lot of missing values
+df.pop("Cabin")
+
 # Splitting the dataset into matrix of features and dependent variable
 X = df.iloc[:, :-1]
 y = df.iloc[:, -1]
+
+print(df.isna().sum())
