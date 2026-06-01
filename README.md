@@ -1,5 +1,5 @@
 # Titanic Survival Predeictor
-A ML model to predict the survival rate of a passenger from the Titanic dataset.
+ML model to predict the survival rate of a passenger from the Titanic dataset.
 
 ## How to run
 Make sure you have `python` installed then make a virtual environment in the main directory by doing
