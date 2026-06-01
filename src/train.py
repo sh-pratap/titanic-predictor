@@ -1,35 +1,60 @@
 # Importing libs
 import pandas as pd
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
-import numpy as np
+import os
+import joblib
 
-# Loading the dataset
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+
+# Loading dataset
 df = pd.read_csv("dataset/titanic.csv")
 
-# Cutting the survived column and placing it at the end
-survived = df.pop("Survived")
-df["Survived"] = survived
+# Split features and target
+X = df.drop(columns=["Survived", "PassengerId", "Name", "Ticket", "Cabin"])
+y = df["Survived"]
 
-# Dropping the useless features
-df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"], inplace=True)
+# Define columns
+numeric_features = ["Age", "Pclass", "SibSp", "Parch", "Fare"]
+categorical_features = ["Sex", "Embarked"]
 
-# Splitting the dataset into matrix of features and dependent variable
-X = df.iloc[:, :-1]
-y = df.iloc[:, -1]
+# Numeric pipeline
+numeric_transformer = SimpleImputer(strategy="mean")
 
-# Getting the mean of Age and filling empty values
-imputer = SimpleImputer(strategy="mean")
-X["Age"] = imputer.fit_transform(X[["Age"]]).ravel()
+# Categorical pipeline 
+categorical_transformer = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("encoder", OneHotEncoder(handle_unknown="ignore"))
+])
 
-# Getting the most frequent of Embarked and filling empty values
-embarked_imputer = SimpleImputer(strategy="most_frequent")
-X["Embarked"] = embarked_imputer.fit_transform(X[["Embarked"]]).ravel()
+# Combine preprocessing
+preprocess = ColumnTransformer([
+    ("num", numeric_transformer, numeric_features),
+    ("cat", categorical_transformer, categorical_features)
+])
 
-# Encoding categorical data
-ct = ColumnTransformer(
-    transformers=[("encoder", OneHotEncoder(), ["Sex", "Embarked"])], remainder="passthrough"
+# Full pipeline
+pipeline = Pipeline([
+    ("preprocess", preprocess),
+    ("model", LogisticRegression(max_iter=400))
+])
+
+# Train test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
 )
 
-X = ct.fit_transform(X)
+# Train model
+pipeline.fit(X_train, y_train)
+
+# Evaluate
+accuracy = pipeline.score(X_test, y_test)
+print("Accuracy:", accuracy)
+
+# Save model
+os.makedirs("models", exist_ok=True)
+joblib.dump(pipeline, "models/pipeline.pkl")
+print("Saved model to models/pipeline.pkl")
