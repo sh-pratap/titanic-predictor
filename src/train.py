@@ -24,7 +24,7 @@ categorical_features = ["Sex", "Embarked"]
 # Numeric pipeline
 numeric_transformer = SimpleImputer(strategy="mean")
 
-# Categorical pipeline 
+# Categorical pipeline
 categorical_transformer = Pipeline([
     ("imputer", SimpleImputer(strategy="most_frequent")),
     ("encoder", OneHotEncoder(handle_unknown="ignore"))
