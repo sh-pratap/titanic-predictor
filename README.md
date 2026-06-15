@@ -16,4 +16,4 @@ The model currently has *80~81%* accuracy it could be enhanced more by feature e
 
 ### Confusion Matrix
 ![Confusion Matrix](graphs/Fig-1.png)
-This shows how did our model performed in predicitng the correct classes. There are **145** correct predictions (90 + 55) and **34** wrong predictions (15 + 19).
+This shows how did our model performed in predicitng the correct classes. There are **145** correct predictions (90 + 55) and **34** wrong predictions (15 + 19). 
